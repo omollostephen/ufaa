@@ -1,4 +1,40 @@
 export async function checkSystemStatus(system) {
+  // If system defines a ussdCode, use server-side USSD probe
+  if (system && system.ussdCode) {
+    try {
+      const body = { code: system.ussdCode, phone: system.testPhone || '' }
+      const res = await fetch('/api/health/ussd', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      })
+      if (!res.ok) {
+        return {
+          up: null,
+          statusCode: res.status,
+          latency: null,
+          checkedAt: new Date().toISOString(),
+          details: `USSD proxy returned ${res.status}`,
+        }
+      }
+      const j = await res.json()
+      return {
+        up: j.up === true,
+        statusCode: null,
+        latency: j.latencyMs || null,
+        checkedAt: j.checkedAt || new Date().toISOString(),
+        details: j.details || 'USSD probe result',
+      }
+    } catch (e) {
+      return {
+        up: null,
+        statusCode: null,
+        latency: null,
+        checkedAt: new Date().toISOString(),
+        details: `USSD probe failed: ${e && e.message ? e.message : e}`,
+      }
+    }
+  }
   // If URL is missing or empty, return explicit down status.
   if (!system || !system.url || String(system.url).trim() === '') {
     return {
@@ -41,6 +77,30 @@ export async function checkSystemStatus(system) {
       checkedAt: new Date().toISOString(),
       details: `Unsupported protocol: ${parsed.protocol}`,
     }
+  }
+
+  // Special-case WhatsApp links: browser fetches cannot reliably determine
+  // whether a WhatsApp number is valid. Treat as unknown unless a server-side
+  // verification is available (e.g. WhatsApp Business API). This avoids false
+  // positives where wa.me redirects or pages exist even for invalid numbers.
+  try {
+    const host = parsed.hostname || ''
+    if (
+      host.includes('wa.me') ||
+      host.includes('whatsapp.com') ||
+      host.includes('api.whatsapp.com')
+    ) {
+      return {
+        up: null,
+        statusCode: null,
+        latency: null,
+        checkedAt: new Date().toISOString(),
+        details:
+          'WhatsApp links cannot be reliably validated from the browser; use provider-side verification',
+      }
+    }
+  } catch (e) {
+    // ignore and continue
   }
 
   const timeoutMs = 4000

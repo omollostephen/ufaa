@@ -39,8 +39,8 @@
           <span class="absolute right-4 top-3 text-gray-400"> 🔍 </span>
         </div>
       </div>
-
       <!-- AGENCY GRID -->
+
       <div v-if="filteredSystems.length === 0" class="text-center text-gray-500">
         No systems found.
       </div>
@@ -89,12 +89,11 @@
                     >{{ statusText(system) }}</span
                   >
                 </div>
-                <div>
-                  <p class="text-sm text-gray-500 mt-2">{{ system.description }}</p>
-                </div>
               </div>
             </div>
-
+            <div class="flex-1 pb-5">
+              <p class="text-sm text-gray-500 mt-2">{{ system.description }}</p>
+            </div>
             <div class="mt-auto pt-4 border-t flex items-center justify-between">
               <a
                 href="#"
@@ -106,7 +105,7 @@
               <button
                 @click.stop="openModal(system)"
                 type="button"
-                class="bg-blue-600 hover:bg-blue-700 hover:cur text-white px-4 py-2 rounded-md shadow-sm"
+                class="bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white px-4 py-2 rounded-md shadow-sm"
               >
                 Status
               </button>
@@ -132,25 +131,25 @@ const selectedSystem = ref(null)
 
 const systems = ref([
   {
-    name: 'Enterprice Resource Planning (ERP)',
+    name: 'ERP',
     logo: '/src/assets/icons/erp.png',
     description: 'Promote the production of Kenya’s essential agricultural products.',
     url: 'https://erp.ufaa.go.ke/bc/SignIn?ReturnUrl=%2Fbc%2F',
   },
   {
-    name: 'Cooporate mail',
+    name: 'Mail',
     logo: '/src/assets/icons/ufaa.jfif',
     description: 'Provide sustainable financing through participative programs.',
     url: 'outlook://',
   },
   {
-    name: 'Printers (MyQ)',
+    name: 'Printers',
     logo: '/src/assets/icons/myq.png',
     description: "Information services supporting Kenya's agricultural sector.",
     url: 'http://192.168.40.192:8080/en/',
   },
   {
-    name: 'Helpdesk Application',
+    name: 'Helpdesk',
     logo: '/src/assets/icons/helpDesk.png',
     description: 'Develop and promote scheduled crops in Kenya.',
     url: 'https://service.ufaa.go.ke/',
@@ -162,7 +161,7 @@ const systems = ref([
     url: 'https://ufaakenya.sharepoint.com/',
   },
   {
-    name: 'Kaspersky Security Center',
+    name: 'Kaspersky',
     logo: '/src/assets/icons/kaspersky.png',
     description: 'Higher education institution supporting academic excellence.',
     url: 'https://192.168.40.22:8081/login?locale=en',
@@ -180,7 +179,7 @@ const systems = ref([
     url: '',
   },
   {
-    name: 'Fleet Management',
+    name: 'Fleet',
     logo: '/src/assets/icons/ufaa.jfif',
     description: 'Higher education institution supporting academic excellence.',
     url: '',
@@ -192,13 +191,13 @@ const systems = ref([
     url: '',
   },
   {
-    name: 'Litigation Management System',
+    name: 'LMS',
     logo: '/src/assets/icons/ufaa.jfif',
     description: 'Higher education institution supporting academic excellence.',
     url: '',
   },
   {
-    name: 'UFAA DataLake',
+    name: 'DataLake',
     logo: '/src/assets/icons/ufaa.jfif',
     description: 'Higher education institution supporting academic excellence.',
     url: 'https://datalake.ufaa.go.ke/Identity/Account/Login/',
@@ -214,6 +213,19 @@ const systems = ref([
     logo: '/src/assets/icons/ufaa.jfif',
     description: 'Higher education institution supporting academic excellence.',
     url: 'https://reunify.ufaa.go.ke/site/login',
+  },
+  {
+    name: 'WhatsApp',
+    logo: '/src/assets/icons/ufaa.jfif',
+    description: 'WhatsApp messaging gateway for claims search and claiming.',
+    // url: 'https://web.whatsapp.com/send/?phone=2540140100100&text&type=phone_number&app_absent=0',
+    url: 'https://wa.me/2540140100100',
+  },
+  {
+    name: 'USSD',
+    logo: '/src/assets/icons/ufaa.jfif',
+    description: 'USSD service for quick user interactions (short codes).',
+    url: '',
   },
 ])
 
