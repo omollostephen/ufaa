@@ -11,7 +11,8 @@
 
         <!-- Navigation -->
         <nav class="hidden md:flex gap-8 text-gray-600 font-medium">
-          <a href="#" class="hover:text-black">Home</a>
+          <router-link to="/" class="hover:text-black">Home</router-link>
+          <router-link to="/admin" class="hover:text-black">Manage Systems</router-link>
           <a href="#" class="hover:text-black">Help & Support</a>
         </nav>
 
@@ -121,6 +122,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+const API_BASE = import.meta.env.VITE_API_BASE || ''
 import SystemStatusModal from '../components/SystemStatusModal.vue'
 import { checkSystemStatus } from '../services/statusService'
 
@@ -128,7 +130,6 @@ const search = ref('')
 
 const modalVisible = ref(false)
 const selectedSystem = ref(null)
-
 const systems = ref([
   {
     name: 'ERP',
@@ -224,7 +225,7 @@ const systems = ref([
   {
     name: 'USSD',
     logo: '/src/assets/icons/ufaa.jfif',
-    description: 'USSD service for quick user interactions (short codes).',
+    description: 'USSD service for quick user interactions (*361#).',
     url: '',
   },
 ])
@@ -282,6 +283,24 @@ async function checkAllStatuses() {
 onMounted(() => {
   checkAllStatuses()
   startAutoRefresh()
+  // merge persisted systems saved via admin server
+  ;(async () => {
+    try {
+      const res = await fetch(`${API_BASE}/api/systems`)
+      if (res.ok) {
+        const added = await res.json()
+        // prepend added systems (avoid duplicates by name)
+        for (const a of added) {
+          if (!systems.value.some((s) => s.name === a.name)) systems.value.unshift(a)
+        }
+        // newly loaded persisted systems need status checks
+        // run a status check pass so they show status immediately
+        await checkAllStatuses()
+      }
+    } catch (e) {
+      // ignore if server not available
+    }
+  })()
 })
 
 // Auto-refresh timer: refresh every 5 minutes and show a warning when <20s

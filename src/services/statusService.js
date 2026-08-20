@@ -1,9 +1,11 @@
+const API_BASE = import.meta.env.VITE_API_BASE || ''
+
 export async function checkSystemStatus(system) {
   // If system defines a ussdCode, use server-side USSD probe
   if (system && system.ussdCode) {
     try {
       const body = { code: system.ussdCode, phone: system.testPhone || '' }
-      const res = await fetch('/api/health/ussd', {
+      const res = await fetch(`${API_BASE}/api/health/ussd`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
